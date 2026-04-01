@@ -1,4 +1,6 @@
 import gradio as gr
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 from agent import QLearningAgent
@@ -8,11 +10,9 @@ from model_loader import load_model, save_model
 from environment import CanteenEnvironment
 
 
-
 # INIT
 env = CanteenEnvironment()
 agent = QLearningAgent(actions=[0, 1, 2, 3])
-
 
 
 # TRAINING
@@ -34,18 +34,15 @@ def train_agent():
     return "Model retrained successfully"
 
 
-
-# LOAD OR TRAIN
+# LOAD MODEL (NO AUTO TRAIN)
 try:
     load_model(agent)
     print("Model loaded")
 except Exception:
-    print("Training new model...")
-    train_agent()
+    print("No model found. Use Retrain button.")
 
 
-
-# GRAPH 
+# GRAPH
 def generate_plot(results):
     if not results:
         return None
@@ -61,10 +58,9 @@ def generate_plot(results):
     plt.grid()
 
     fig = plt.gcf()
-    plt.close()   
+    plt.close()
 
     return fig
-
 
 
 # SIMULATION
@@ -95,13 +91,13 @@ def simulate(steps):
     return rows, summary, plot
 
 
-
 # UI
 with gr.Blocks() as demo:
     gr.Markdown("# AI Canteen Optimization System")
-    gr.Markdown("Reinforcement Learning-based smart queue and counter control")
+    gr.Markdown("Reinforcement Learning-based queue and counter control")
 
-    steps_input = gr.Slider(5, 30, value=10, step=1, label="Simulation Steps")
+    # default value set to 121
+    steps_input = gr.Slider(5, 200, value=121, step=1, label="Simulation Steps")
 
     with gr.Row():
         run_btn = gr.Button("Run Simulation")
@@ -128,6 +124,5 @@ with gr.Blocks() as demo:
     )
 
 
-
-# LAUNCH (HF SAFE)
-demo.launch()
+# LAUNCH
+demo.launch(server_name="0.0.0.0", server_port=7860)
