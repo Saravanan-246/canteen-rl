@@ -115,7 +115,4 @@ with gr.Blocks() as demo:
     )
 
 
-demo.launch(
-    server_name="127.0.0.1",   # change from 0.0.0.0
-    server_port=7861
-)
+demo.launch()
