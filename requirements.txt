@@ -1,4 +1,6 @@
-gradio
+gradio==4.44.0
+huggingface_hub==0.16.4
 fastapi
 uvicorn
 matplotlib
+pydub==0.25.1
