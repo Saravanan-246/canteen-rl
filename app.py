@@ -8,12 +8,14 @@ from model_loader import load_model, save_model
 from environment import CanteenEnvironment
 
 
-# Init
+
+# INIT
 env = CanteenEnvironment()
 agent = QLearningAgent(actions=[0, 1, 2, 3])
 
 
-# Train
+
+# TRAINING
 def train_agent():
     for _ in range(EPISODES):
         state = env.reset()
@@ -29,17 +31,25 @@ def train_agent():
 
     agent.epsilon = 0.05
     save_model(agent)
+    return "Model retrained successfully"
 
 
-# Load or train
+
+# LOAD OR TRAIN
 try:
     load_model(agent)
-except:
+    print("Model loaded")
+except Exception:
+    print("Training new model...")
     train_agent()
 
 
-# Graph
+
+# GRAPH 
 def generate_plot(results):
+    if not results:
+        return None
+
     steps = [r["step"] for r in results]
     queues = [r["queue"] for r in results]
 
@@ -50,10 +60,14 @@ def generate_plot(results):
     plt.ylabel("Queue")
     plt.grid()
 
-    return plt
+    fig = plt.gcf()
+    plt.close()   
+
+    return fig
 
 
-# Simulation
+
+# SIMULATION
 def simulate(steps):
     result = run_simulation(agent, steps)
 
@@ -81,13 +95,13 @@ def simulate(steps):
     return rows, summary, plot
 
 
+
 # UI
 with gr.Blocks() as demo:
     gr.Markdown("# AI Canteen Optimization System")
     gr.Markdown("Reinforcement Learning-based smart queue and counter control")
 
-    with gr.Row():
-        steps_input = gr.Slider(5, 30, value=10, step=1, label="Simulation Steps")
+    steps_input = gr.Slider(5, 30, value=10, step=1, label="Simulation Steps")
 
     with gr.Row():
         run_btn = gr.Button("Run Simulation")
@@ -99,7 +113,6 @@ with gr.Blocks() as demo:
     )
 
     summary_box = gr.Textbox(label="Summary")
-
     plot_output = gr.Plot(label="Queue Trend")
 
     run_btn.click(
@@ -111,8 +124,10 @@ with gr.Blocks() as demo:
     retrain_btn.click(
         fn=train_agent,
         inputs=[],
-        outputs=[]
+        outputs=summary_box
     )
 
 
+
+# LAUNCH (HF SAFE)
 demo.launch()
