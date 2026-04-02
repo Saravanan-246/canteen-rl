@@ -18,4 +18,4 @@ def load_model(agent, path="q_table.json"):
         print(f"Model loaded from {path}")
     except Exception as e:
         print(f"Error loading model: {e}")
-        raise
+        raise Exception("Failed to load model")

@@ -1,5 +1,6 @@
 import random
 import json
+import ast
 from collections import defaultdict
 
 
@@ -44,7 +45,7 @@ class QLearningAgent:
         self.visit_counts[state][action] += 1
 
         current_q = self.q_table[state][action]
-        max_next_q = max(self.q_table[next_state])
+        max_next_q = max(self.q_table[next_state]) if next_state in self.q_table else 0
 
         lr = self.alpha / (1 + 0.01 * self.visit_counts[state][action])
         target = reward + self.gamma * max_next_q
@@ -65,18 +66,18 @@ class QLearningAgent:
             for state, q in self.q_table.items()
         }
 
-    # safe save (handles tuple keys)
+    # save model
     def save(self, path="q_table.json"):
         data = {str(k): v for k, v in self.q_table.items()}
         with open(path, "w") as f:
-            json.dump(data, f)
+            json.dump(data, f, indent=2)
 
-    # safe load (restores tuple keys)
+    # load model safely
     def load(self, path="q_table.json"):
         try:
             with open(path, "r") as f:
                 data = json.load(f)
-                parsed = {eval(k): v for k, v in data.items()}
+                parsed = {ast.literal_eval(k): v for k, v in data.items()}
                 self.q_table = defaultdict(
                     lambda: [0.0] * self.n_actions, parsed
                 )

@@ -58,6 +58,8 @@ def evaluate(agent, runs=3, steps=20):
 
     agent.epsilon = 0.0
 
+    steps = max(1, int(steps))  # safety
+
     for run in range(runs):
         env = CanteenEnvironment()
         state = env.reset()

@@ -11,7 +11,7 @@ ACTION_MAP = {
 
 
 def run_simulation(agent, steps=10):
-    steps = min(steps, 50)
+    steps = max(1, min(int(steps), 50))  # safer handling
 
     env = CanteenEnvironment()
     state = env.reset()

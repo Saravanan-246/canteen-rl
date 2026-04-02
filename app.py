@@ -34,7 +34,7 @@ def train_agent():
     return "Model retrained successfully"
 
 
-# LOAD MODEL (NO AUTO TRAIN)
+# LOAD MODEL
 try:
     load_model(agent)
     print("Model loaded")
@@ -65,30 +65,35 @@ def generate_plot(results):
 
 # SIMULATION
 def simulate(steps):
-    result = run_simulation(agent, steps)
+    try:
+        steps = int(steps)
+        result = run_simulation(agent, steps)
 
-    rows = [
-        [
-            r["step"],
-            r["queue"],
-            r["counters"],
-            r["time"],
-            r["decision"],
-            r["reward"],
-            r["efficiency"],
+        rows = [
+            [
+                r["step"],
+                r["queue"],
+                r["counters"],
+                r["time"],
+                r["decision"],
+                r["reward"],
+                r["efficiency"],
+            ]
+            for r in result["results"]
         ]
-        for r in result["results"]
-    ]
 
-    plot = generate_plot(result["results"])
+        plot = generate_plot(result["results"])
 
-    summary = (
-        f"Total Reward: {result['summary']['total_reward']}\n"
-        f"Average Efficiency: {result['summary']['avg_efficiency']}\n"
-        f"Status: {result['summary']['status']}"
-    )
+        summary = (
+            f"Total Reward: {result['summary']['total_reward']}\n"
+            f"Average Efficiency: {result['summary']['avg_efficiency']}\n"
+            f"Status: {result['summary']['status']}"
+        )
 
-    return rows, summary, plot
+        return rows, summary, plot
+
+    except Exception as e:
+        return [], f"Error: {str(e)}", None
 
 
 # UI
@@ -96,7 +101,6 @@ with gr.Blocks() as demo:
     gr.Markdown("# AI Canteen Optimization System")
     gr.Markdown("Reinforcement Learning-based queue and counter control")
 
-    # default value set to 121
     steps_input = gr.Slider(5, 200, value=121, step=1, label="Simulation Steps")
 
     with gr.Row():
@@ -124,5 +128,6 @@ with gr.Blocks() as demo:
     )
 
 
-# LAUNCH
-demo.launch(server_name="0.0.0.0", server_port=7860)
+# LAUNCH (HF + local safe)
+# demo.launch(server_name="0.0.0.0", server_port=7860)
+demo.launch(server_name="127.0.0.1", server_port=7860, share=True)

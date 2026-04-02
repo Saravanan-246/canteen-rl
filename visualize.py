@@ -26,4 +26,7 @@ def plot_rewards(rewards):
     plt.legend()
     plt.grid()
 
-    plt.show()
+    fig = plt.gcf()
+    plt.close()
+
+    return fig

@@ -36,6 +36,7 @@ env = CanteenEnvironment()
 agent = QLearningAgent(actions=[0, 1, 2, 3])
 
 
+# TRAINING
 def train_agent():
     for _ in range(EPISODES):
         state = env.reset()
@@ -53,21 +54,23 @@ def train_agent():
     save_model(agent)
 
 
-# Try loading existing model, else train
+# LOAD MODEL (safe)
 try:
     load_model(agent)
-except:
+except Exception:
     train_agent()
 
 
+# ROOT
 @app.get("/")
 def root():
     return {"message": "Canteen RL API running"}
 
 
+# SIMULATION
 @app.post("/simulate")
 def simulate(data: InputData):
-    steps = min(data.steps, 50)
+    steps = max(1, min(data.steps, 50))
 
     state = env.reset()
     results = []

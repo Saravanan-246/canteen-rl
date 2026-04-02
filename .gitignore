@@ -1,4 +1,3 @@
+.gradio/
+*.pem
 __pycache__/
-*.pyc
-venv/
-.env
