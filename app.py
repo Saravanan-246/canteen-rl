@@ -66,7 +66,8 @@ def generate_plot(results):
 # SIMULATION
 def simulate(steps):
     try:
-        steps = int(steps)
+        steps = max(1, min(int(steps), 50))  # safe limit
+
         result = run_simulation(agent, steps)
 
         rows = [
@@ -101,15 +102,15 @@ with gr.Blocks() as demo:
     gr.Markdown("# AI Canteen Optimization System")
     gr.Markdown("Reinforcement Learning-based queue and counter control")
 
-    steps_input = gr.Slider(5, 200, value=121, step=1, label="Simulation Steps")
+    steps_input = gr.Slider(5, 50, value=20, step=1, label="Simulation Steps")
 
     with gr.Row():
         run_btn = gr.Button("Run Simulation")
         retrain_btn = gr.Button("Retrain Model")
 
+    # FIXED DATAFRAME 
     table = gr.Dataframe(
-        headers=["Step", "Queue", "Counters", "Time", "Decision", "Reward", "Efficiency"],
-        datatype=["number", "number", "number", "str", "str", "number", "number"]
+        headers=["Step", "Queue", "Counters", "Time", "Decision", "Reward", "Efficiency"]
     )
 
     summary_box = gr.Textbox(label="Summary")
@@ -128,6 +129,5 @@ with gr.Blocks() as demo:
     )
 
 
-# LAUNCH (HF + local safe)
-# demo.launch(server_name="0.0.0.0", server_port=7860)
-demo.launch(server_name="127.0.0.1", server_port=7860, share=True)
+# LAUNCH (FOR HUGGING FACE ONLY)
+demo.launch(server_name="0.0.0.0", server_port=7860)
